@@ -1,0 +1,13 @@
+1.Create a executable file by 'Echo -n superSecretPassword > password.txt' and 'clang -g -O0 -fno-stack-protector -fomit-frame-pointer -Wl,-no_pie login.c'.
+
+2.The password is stored at most 32 bytes. So we could overflow the buffer and get the return address of login because the password is stored at most 32 bytes.
+
+3.Run the executable file. The shell shows "successful login" and it begins to run.
+
+4.Disassemble and redirect to disassembled.s.
+
+5.Use 'lldb' to check the return address which we would like to replace.
+
+6.Run the command "python -c 'print "a"*40 + "\x80\x0e\x00\x00\x01\x00\x00\x00", password.txt'". Because the correct return address is 0x0000000100000e80, we could overwrite data at this address.
+
+7.Run this executable file again and we could successfully login without correct password.

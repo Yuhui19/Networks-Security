@@ -1,0 +1,148 @@
+OSI model
+	Application: app-specific stuff e.g. sending email, file sharing, looking up the ip address, HTTP, FTP, DNS, SMTP
+
+	presentation/security: TLS
+
+	transport: process to process(ports), TCP/UDP/QUIC
+
+	network: host to host, router, IP
+
+	link: next hop communication, e.g. Ethernet, WIFI, doxis(cable modem internet)
+
+	physical: how the data is actually transfered: light, radio waves
+
+
+What features does TCP provide beyond reliable data transfer?
+	reliable data transfer: you will probably get data I sent, but definitely not data someone else sent
+	congestion control: (deals with network)AIMD additive increase multiplicative decrease
+	flow control: rwnd, don't want to overwhelm the receiver buffer
+
+	UDP has no transmission speed limit, no connection, not setup before sending data
+		e.g. DNS
+
+
+QUIC(congestion control, flow control, encryption, one-time handshakes, same features as TCP, more lightweight)
+
+ARP: bridge between network and link, translation between IP and MAC, broadcast message
+
+network performance: 
+	processing: very small
+	propagation: how long it takes for the signal to transfer, based on speed of light(fixed)
+	transmission: how long it takes to leave, decide on the length of the packet and transmission rate
+	queuing: depend on the traffic, etc.
+
+network layer:
+	router: forward a incoming packet in the right direction(right outgoing link)
+			use forwarding table (use prefix to avoid large tables)
+			assumption: hosts with same prefix are located near each other geographically
+			how to fill in the table? bellman ford(inside the AS)
+			between the AS: a lot of stuff to worry about, BGP protocol(how ASs communicate about routes, costs, etc.)
+
+
+NAT: tells lies
+
+	me                 NAT            internet
+local IP             NAT IP
+local port           NAT port
+
+link layer:
+	broadcast media: problem: collisions
+	key piece of most algorithms: randomization
+	aloha, CSMA
+	LANs, switches
+	switch is transparent
+	learns by watching the traffic, if it doesn't know, broadcast to all the links
+
+
+
+
+
+
+
+
+
+
+Crypto
+
+four things we use crypto to get:
+	confidentiality
+	non-repudiation: digital signatures
+	message integrity
+	authentication
+
+
+block cypher
+stream cypher
+hash functions irreversible
+RSA: email, don't need to communicate at the same time    formula: (M^ed) % N = M 
+DH: create a shared secret key                             (g^(SaSb)) % N = Kab
+
+
+Difference between block cypher, stream cypher and RSA
+block cypher and stream cypher need a secret key, RSA doesn't
+
+
+HMAC is a way of putting hash function together h(k + h(m + k))
+
+
+block cypher:
+	reversible, fixed block and key size
+	possible attack on a longer message: block arrangement(but can't change a block)
+
+stream cypher:
+	pseudo random 
+	xor
+	bit-flipping attack
+	can't repeat the key stream
+
+certificate: mostly a public key signed by someone and a identifier for who owns the key
+
+authentication: 
+	playback attack: use nouce
+
+
+Diff between TLs and IPsec is mainly the layers
+	TLS: negotiate  on top of the transport layer
+	IPsec:    on top of the network layer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

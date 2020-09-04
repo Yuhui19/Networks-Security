@@ -1,0 +1,26 @@
+The topic for this presentation is Exploiting TrustZone TEEs. Specifically, this is a mobile security issue that has been discovered on Android devices. In this presentation, we’ll talk about what is TrustZone, what is TEE, what kind of vulnerabilities have been discovered, how can attackers exploit the design issue, and lastly why is that a bad thing. There are actually a lot of complicated concepts involved, but we’ll try to make it simple and easy to understand.
+
+//
+
+Nowadays, mobile devices process a wide variety of personal and private information, such as payment data, passwords, cryptographic keys, and biometric identifiers like fingerprint or face recognition. The demands on confidentiality for sensitive data has become higher. Therefore, regular operating system has been considered not safe enough. 
+
+In response to that, mobile device manufacturers developed a “Trusted Execution Environment”, TEE in short, where Trusted Applications can be executed and our sensitive data can be processed. 
+
+There are 2 major TEE implementations exist in Adroid system. One is Qualcomm’s QSEE, and the other is Trustonic’s Kinibi. Their implementation of TEE are all based on ARM TrustZone security extensions.
+
+//
+
+So what is TrustZone? TrustZone is a hardware-based security architecture. It allows us to create 2 environments that can run in parallel on a single processor. One is the “normal world”, and the other is the “secure world” as the figure shown. The normal world is where we run the regular operating system; the secure world is where we run the TEE which is composed of trusted applications and trusted operating system. This way, we can hardware isolate the security critical applications and sensitive data from the normal world. 
+
+TrustZone provides each world with their own privilege levels. We can think of both of them can run in their own user mode and kernal mode. Like regular operating system, the security of a TEE relies on the integrity of both its trusted applications and the trusted OS’s kernal. A trusted application is a signed third party application that can be loaded from normal world into TEE and process user-supplied data. It is also called a trustlet. So a malicious thing the attacker can do is find a vulnerability in a trustlet and exploit it to gain code execution within the TEE.
+
+//
+
+As the name implies, the secure world should protect against any attacks from the normal world. The way they achieve this is by using a trustlet revocation feature. The mechanism is basically if a trustlet has been found some vulnerabilities and has been patched and updated, the older version should be revoked. And there is a version counter that should track the trustlet's version number. So before a trustlet gets loaded into TEE, TEE verifies both its software signature and release version. If the signature or version number doesn't match, the trustlet should not be loaded into TEE. This can prevent the normal world from loading an older and vulnerable trustlet into the secure world.
+
+However, one big problem is that, the trustlet revocation feature has been found not used at all across many Android devices. The author of Project Zero has extracted the field that stored the version counter from many trustlet samples, and found surprisingly, almost every trustlet’s version number is 0. The same problem exist in both Qualcomm’s QSEE and Trustonic’s Kinibi. 
+
+Since these TrustZone-based TEEs are proprietary components provided by the device’s manufacturers, we are not able to be sure what’s the real cause. This would imply one of two things: either no bugs are ever found in any trustlet, or devices are failing to revoke vulnerable trustlets. And we’ll see the following exploitation example to verify the answer for this question.
+
+
+

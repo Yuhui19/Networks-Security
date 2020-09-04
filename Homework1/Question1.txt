@@ -1,0 +1,6 @@
+Question 1
+
+1.Min(Tb-Ta) for 1000 bytes is 2.8ms, so average queuing delay experienced by 1000 byte packet is average time more than the min time which is 2.8ms. ((11-2.8)+(10-2.8)+(3.0-2.8)+(5.5-2.8)+(2.8-2.8))/5=3.66ms.
+So the answer is 3.66ms.
+
+2.Assume a is the bandwidth and b is propagation delay. So 500/a+b=2.4, 1000/a+b=2.8, and we get a=1.25 Mbytes/second, b=2ms. Thus, when size is 600 bytes, the transmission delay is 600/a=0.48ms, and the propagation delay is 2ms.

@@ -1,0 +1,7 @@
+1.What is the difference between flow control and congestion control?
+
+Flow control is to slow the rate of transmission in order to make sure that the sender can catch up with receiver.
+Congestion control is to control the number of packets can be transmitted in order to make sure the sender will not be overwhelming.
+
+2.Describe the way TCP implements each of these features.
+The general principles used in TCP are lost packets mean congestion, slow down transmission, acknowledged packets mean congestion, slow down transmission. For flow control, TCP limited the free space left in receiver's read buffer in TCP header. Sender cannot send packets in flight more than the rwnd value. TCP has no access to get information of intermediate routers. It cannot send and receive packets without endpoints information. 

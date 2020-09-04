@@ -1,0 +1,58 @@
+
+Exploit:
+
+Now we move forward to the exploiting part. As Qian-Hui mentioned before, we can always detect the version 0 trustlet. Since there is no bug free code in this world, we could assume correct answer is the latter one. For verification, we can exploit by following the execution flow through the process of loading a trustlet, which starting at the Normal World and ending in the Secure World's TEE.
+
+We choose trustonic to show this example. There are two steps for this implementation.
+
+(Next Slide)
+First step is load an old version trustlet.
+
+When a user-mode process wants to load a trusted application, they do so by sending a request to a special daemon provided by Trustonic - “mcDriverDaemon”. This daemon allows clients to issue requests to the TEE.
+
+While the load request specifies the ID of the trustlet to be loaded, the daemon only uses the ID to locate the binary, but does not ensure that the given ID matches the one encoded in the trustlet's header. Therefore, it’s possible to load an old trustlet by sending a load request with the current version's ID instead of its own ID to the daemon.
+
+By exploiting this vulnerability, when TEE verifies the trustlet, the ID is matched and since the revocation feature fails to check the version number, we can go ahead and load an old version trustlet.
+
+Exploit Step 2:
+(Next Slide)
+After we load the old version trustlet, we can move forward to step 2.
+
+The issue we’re going to exploit is a simple stack-overflow. The fact is stack overflow usually mitigated against by modern exploit mitigations but when looking at the binary it appears that no such mitigation is present!
+
+There are four steps to implement. In advance, the loaded old version trustlet contains a OTP trustlet which allows users to generate OTP tokens. Like most other trusted applications, its code consists of a simple loop which waits for notifications from the TEE OS informing it of an incoming command. 
+
+Once a command is issued by a user in the “Normal World”, the TEE OS notifies the trusted application, which subsequently processes the incoming data using the “process_cmd” function. By reversing this function we can see the trustlet supports many different commands. Each command is assigned a 32-bit “command ID”, which is placed at the beginning of the user’s input buffer.
+
+Following the code for these commands, it is apparent that many them use a function called “otp_unwrap”, in order to take a user-provided OTP token and decrypt it.
+
+This function receives several arguments, including the length of the buffer to be unwrapped. However, it appears that the length argument is taken from a user-controlled portion of the input buffer. As the buffer is first copied into a stack-allocated buffer, this allows us to simply overwrite the stack frame.
+
+(Next Slide)
+So we can utilize the stack space available between the two stack frames for the Return Oriented Programming. We would write a ROP chain that simply prepares the arguments for a function, executes it, and returns the return value back to “process_cmd”. 
+
+(Next Slide)
+That way, we use “execute-function-in-TEE” primitive, allowing us to run arbitrary code within the TEE so we can invoke any function in the trusted application’s address space.
+
+(Next Slide)
+Once we’ve finished mapping out the stack layout, we’re ready to exploit the issue. All that’s left is to build a stack frame which overwrites the stored LR register to point at the beginning of our ROP chain’s gadgets, followed by a sequence of ROP gadgets needed to prepare arguments and call a function. 
+
+(Next Slide)
+Once we’re done, the last step is we can simply fill the rest of the remaining space with POP-sleds, until we reach “process_cmd”’s stack frame.
+
+Next Slide)
+Afterwards, there are several problems need to be solved in practice.
+
+(Next Slide)
+Here is the reference and that's all. Thank you.
+
+
+
+
+
+
+
+
+
+
+

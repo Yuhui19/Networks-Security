@@ -1,0 +1,3 @@
+Q1
+
+Because 8 bits block size only have 2^8 different answers, it's easy to do offline guessing. Or even do online deciphering. Moreover, since it's a known-plaintext, the attacker has known some plaintext-ciphertext pairs, the block cypher becomes much easier for attacker to decipher.

@@ -1,0 +1,7 @@
+Q2
+
+a. Since it's a block cypher and there are three blocks in this example, the eavesdropper will know how long the message is. Also, since this key is always k, the eavesdropper will know repeat blocks if there are.
+
+b. The attacker can send those blocks repeatedly or reorganize the order of blocks. Also attacker can delete one or more blocks.
+
+c. Alice can send different cypher blocks by using different keys. For example, randomly choose one key for the first block and then xor every following block by the previous block.

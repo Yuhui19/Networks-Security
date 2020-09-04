@@ -1,0 +1,3 @@
+Total lines of received packets: 229
+Minimum time: 140.417
+Average time: 147.788
